@@ -8,7 +8,6 @@ public class httpClient : MonoBehaviour
     HttpListener _httpListener = new HttpListener();
     Vector3 newRotation = new Vector3(0,0,0);
     Vector3 initRotation = new Vector3(0,0,0);
-    private bool initAngle = true;
 
     // WebSocket ws;
     void Start()
@@ -17,12 +16,17 @@ public class httpClient : MonoBehaviour
 	}
 
 	void Update(){
-		
+
+		// Important to adjust the initial angle when phone's upright
+		if (Input.GetKeyDown(KeyCode.A))
+		{
+			initRotation = newRotation;
+		}
 	}
 	
 	private void setOrientation(string angles)
     {
-        Debug.Log(angles);
+        // Debug.Log(angles);
 
         try{
 
@@ -31,23 +35,9 @@ public class httpClient : MonoBehaviour
             float x = float.Parse( arr[1]);
             float z = float.Parse( arr[2]);
             // Debug.Log(x.ToString()+", "+y.ToString()+", "+z.ToString());
-
-            if(newRotation.x==0&&newRotation.y==0&&newRotation.z==0){
-                initAngle = true;                
-            }
-
-            else{
-                initAngle = false;
-            }
-
+            
             newRotation = new Vector3(x,y,z);
-			if(initAngle){
-				initRotation = newRotation;
-			}
-
-			else{
-				transform.eulerAngles = newRotation - initRotation;
-			}
+			transform.eulerAngles = newRotation - initRotation;
         }
         catch(Exception e){
             Debug.Log(e);
@@ -67,7 +57,7 @@ public class httpClient : MonoBehaviour
 			}
 			else
 			{
-				Debug.Log("Received: " + uwr.downloadHandler.text);
+				// Debug.Log("Received: " + uwr.downloadHandler.text);
 				setOrientation(uwr.downloadHandler.text);
 			}
 
